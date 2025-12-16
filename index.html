@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sindirim Sistemi Öğrenme Portalı</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #27ae60 0%, #2c3e50 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #27ae60;
+        }
+
+        .card i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #27ae60;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateX(-5px);
+        }
+
+        /* Flashcard Styles */
+        .flashcard-container {
+            width: 100%;
+            max-width: 700px;
+            height: 400px;
+            perspective: 1500px;
+            margin: 20px auto;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            cursor: pointer;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(45deg, #ffffff, #f8f9fa);
+            color: #2c3e50;
+            transform: rotateY(180deg);
+            border: 3px solid #9b59b6;
+        }
+
+        .flashcard-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .flashcard-btn {
+            padding: 12px 25px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .flashcard-btn:hover {
+            background: #219653;
+            transform: translateY(-2px);
+        }
+
+        /* Mind Map Styles */
+        .mindmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .mindmap-node {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #27ae60;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .mindmap-node:hover {
+            transform: translateY(-5px);
+        }
+
+        .mindmap-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #27ae60;
+        }
+
+        .mindmap-content {
+            list-style-type: none;
+        }
+
+        .mindmap-content li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .mindmap-content li:before {
+            content: "•";
+            color: #27ae60;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Test Styles */
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #2ecc71;
+            transition: transform 0.3s;
+        }
+
+        .question-card:hover {
+            transform: translateX(5px);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #2ecc71;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #f1f8ff;
+            border-color: #27ae60;
+        }
+
+        .option.selected {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: white;
+            color: #27ae60;
+        }
+
+        .test-result {
+            background: linear-gradient(135deg, #27ae60, #2c3e50);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            margin: 0 auto 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .score-total {
+            opacity: 0.8;
+        }
+
+        /* Summary Styles */
+        .summary-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .summary-section {
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #27ae60;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .summary-section:hover {
+            transform: translateX(10px);
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #27ae60;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-title i {
+            color: #27ae60;
+        }
+
+        .summary-list {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        .summary-list li {
+            margin: 12px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .summary-list li:before {
+            content: "✓";
+            color: #2ecc71;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .important-note {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .diagram-note {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        /* Progress and Stats */
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .flashcard-container {
+                height: 350px;
+            }
+            
+            .mindmap {
+                grid-template-columns: 1fr;
+            }
+            
+            .flashcard-controls {
+                flex-wrap: wrap;
+            }
+            
+            .option {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-stomach"></i> Sindirim Sistemi Öğrenme Portalı</h1>
+            <div class="subtitle">4 farklı öğrenme yöntemi ile konuyu keşfedin</div>
+            <div class="progress-container" id="progress-container">
+                <div class="progress-info">
+                    <span><i class="fas fa-check-circle"></i> Tamamlanan: <span id="completed-count">0</span>/4</span>
+                    <span><i class="fas fa-chart-line"></i> İlerleme: <span id="progress-percent">0%</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="card" id="flashcard-btn">
+                <i class="fas fa-layer-group"></i>
+                <div class="card-title">Bilgi Kartları</div>
+                <div class="card-description">70 adet soru-cevap kartı ile konuyu tekrar edin ve bilgilerinizi test edin.</div>
+            </div>
+            
+            <div class="card" id="mindmap-btn">
+                <i class="fas fa-project-diagram"></i>
+                <div class="card-title">Zihin Haritası</div>
+                <div class="card-description">Konunun ana hatlarını görsel olarak öğrenin ve bağlantıları keşfedin.</div>
+            </div>
+            
+            <div class="card" id="test-btn">
+                <i class="fas fa-file-alt"></i>
+                <div class="card-title">Test Çöz</div>
+                <div class="card-description">50 soruluk detaylı test ile bilgilerinizi sınayın ve performansınızı görün.</div>
+            </div>
+            
+            <div class="card" id="summary-btn">
+                <i class="fas fa-book"></i>
+                <div class="card-title">Detaylı Özet</div>
+                <div class="card-description">Konunun tüm detaylarını kapsamlı özet şeklinde tekrar edin.</div>
+            </div>
+        </div>
+
+        <!-- Flashcard Section -->
+        <div class="content-section" id="flashcard-section">
+            <button class="back-btn" id="back-from-flashcards">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-layer-group"></i> Bilgi Kartları
+            </h2>
+            
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-front">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">❓</div>
+                        <div class="question" id="question" style="font-size: 1.5rem; font-weight: 600; line-height: 1.6;">
+                            Soru buraya gelecek
+                        </div>
+                        <div style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+                            <i class="fas fa-mouse-pointer"></i> Kartı çevirmek için tıklayın
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">💡</div>
+                        <div class="answer" id="answer" style="font-size: 1.4rem; line-height: 1.6;">
+                            Cevap buraya gelecek
+                        </div>
+                        <div style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+                            <i class="fas fa-redo"></i> Tekrar çevirmek için tıklayın
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flashcard-controls">
+                <button class="flashcard-btn" id="prev-btn">
+                    <i class="fas fa-arrow-left"></i> Önceki
+                </button>
+                <button class="flashcard-btn" id="flip-btn">
+                    <i class="fas fa-sync-alt"></i> Kartı Çevir
+                </button>
+                <button class="flashcard-btn" id="next-btn">
+                    Sonraki <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="flashcard-btn" id="shuffle-btn" style="background: #e74c3c;">
+                    <i class="fas fa-random"></i> Karıştır
+                </button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #666; font-size: 1.1rem;">
+                <span id="current-card">1</span> / <span id="total-cards">70</span> Kart
+            </div>
+        </div>
+
+        <!-- Mind Map Section -->
+        <div class="content-section" id="mindmap-section">
+            <button class="back-btn" id="back-from-mindmap">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-project-diagram"></i> Sindirim Sistemi Zihin Haritası
+            </h2>
+            
+            <div class="mindmap">
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sindirim Sistemi Yapıları</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Ağız:</strong> Mekanik ve kimyasal sindirim başlar</li>
+                        <li><strong>Yutak:</strong> Besinleri yemek borusuna iletir</li>
+                        <li><strong>Yemek borusu:</strong> Peristaltik hareketle besin taşır</li>
+                        <li><strong>Mide:</strong> Mekanik ve kimyasal sindirim</li>
+                        <li><strong>İnce bağırsak:</strong> Sindirim ve emilim</li>
+                        <li><strong>Kalın bağırsak:</strong> Su emilimi, atık depolama</li>
+                        <li><strong>Anüs:</strong> Atıkların dışarı atılması</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sindirim Çeşitleri</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Mekanik Sindirim:</strong>
+                            <li>• Besinlerin fiziksel olarak küçük parçalara ayrılması</li>
+                            <li>• Çiğneme, mide-bağırsak hareketleri</li>
+                            <li>• Safra ile yağların küçük damlacıklara ayrılması</li>
+                        </li>
+                        <li><strong>Kimyasal Sindirim:</strong>
+                            <li>• Enzimlerle besinlerin yapı taşlarına ayrılması</li>
+                            <li>• Hücre içi ve hücre dışı sindirim</li>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sindirim Organları ve Görevleri</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Ağız:</strong> Tükürük bezleri, amilaz enzimi, dişler, dil</li>
+                        <li><strong>Mide:</strong> HCl, pepsin, mukus, mekanik karıştırma</li>
+                        <li><strong>İnce bağırsak:</strong> Villus, mikrovillus, emilim yüzeyi</li>
+                        <li><strong>Pankreas:</strong> Sindirim enzimleri, bikarbonat, hormonlar</li>
+                        <li><strong>Karaciğer:</strong> Safra üretimi, metabolik düzenleme</li>
+                        <li><strong>Safra kesesi:</strong> Safra depolama ve salgılama</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sindirim Hormonları</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Gastrin:</strong> Mide → Mide öz suyu salgılanması</li>
+                        <li><strong>Sekretin:</strong> İnce bağırsak → Pankreas bikarbonat salgısı</li>
+                        <li><strong>Kolesistokinin:</strong> İnce bağırsak → Safra ve pankreas enzimleri</li>
+                        <li><strong>GIP (Gastroinhibituar peptit):</strong> İnce bağırsak → Mide hareketlerini yavaşlatır</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Besinlerin Sindirimi</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Karbohidratlar:</strong> Ağızda başlar, ince bağırsakta biter</li>
+                        <li><strong>Proteinler:</strong> Midede başlar, ince bağırsakta biter</li>
+                        <li><strong>Yağlar:</strong> İnce bağırsakta başlar ve biter</li>
+                        <li><strong>Vitamin/Mineraller:</strong> Sindirilmez, direkt emilir</li>
+                        <li><strong>Su:</strong> İnce ve kalın bağırsaktan emilir</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Emilim Mekanizmaları</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Aktif taşıma:</strong> Glikoz, amino asitler, iyonlar</li>
+                        <li><strong>Kolaylaştırılmış difüzyon:</strong> Fruktoz</li>
+                        <li><strong>Basit difüzyon:</strong> Yağ asitleri, gliserol, vitaminler</li>
+                        <li><strong>Osmoz:</strong> Su emilimi</li>
+                        <li><strong>Lenf yolu:</strong> Yağ asitleri, gliserol, A,D,E,K vitaminleri</li>
+                        <li><strong>Kan yolu:</strong> Glikoz, amino asitler, mineral, B,C vitaminleri</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sindirim Hastalıkları</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Gastrit:</strong> Mide iltihabı</li>
+                        <li><strong>Ülser:</strong> Mide/onikiparmak bağırsağı yarası</li>
+                        <li><strong>Reflü:</strong> Mide asidinin yemek borusuna kaçması</li>
+                        <li><strong>İshal:</strong> Sulu dışkı, sıvı kaybı</li>
+                        <li><strong>Kabızlık:</strong> Dışkılama güçlüğü</li>
+                        <li><strong>Laktoz intoleransı:</strong> Süt şekerini sindirememe</li>
+                        <li><strong>Hemoroit:</strong> Anüs toplardamar genişlemesi</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Sağlıklı Sindirim İçin</div>
+                    <ul class="mindmap-content">
+                        <li>Yavaş yavaş yemek, iyi çiğnemek</li>
+                        <li>Bol su içmek</li>
+                        <li>Lifli gıdalar tüketmek</li>
+                        <li>Probiyotik ve prebiyotik almak</li>
+                        <li>Düzenli egzersiz yapmak</li>
+                        <li>Stresten uzak durmak</li>
+                        <li>Alkol, sigaradan kaçınmak</li>
+                        <li>Dengeli ve düzenli beslenmek</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section -->
+        <div class="content-section" id="test-section">
+            <button class="back-btn" id="back-from-test">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-file-alt"></i> Sindirim Sistemi Testi (50 Soru)
+            </h2>
+            
+            <div class="test-container" id="test-container">
+                <!-- Test questions will be loaded here -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="flashcard-btn" id="submit-test" style="background: #2ecc71; padding: 15px 40px; font-size: 1.1rem;">
+                    <i class="fas fa-paper-plane"></i> Testi Bitir ve Sonuçları Gör
+                </button>
+                <button class="flashcard-btn" id="clear-selections" style="background: #f39c12; margin-left: 10px;">
+                    <i class="fas fa-eraser"></i> Seçimleri Temizle
+                </button>
+            </div>
+            
+            <div class="test-result" id="test-result">
+                <div class="score-circle">
+                    <div class="score-number" id="score">0</div>
+                    <div class="score-total">/ 50</div>
+                </div>
+                <h3 style="margin-bottom: 15px; font-size: 1.8rem;">Test Sonuçlarınız</h3>
+                <div id="test-message" style="font-size: 1.2rem; margin-bottom: 20px;"></div>
+                <div id="detailed-result" style="margin-bottom: 20px;"></div>
+                <button class="back-btn" id="restart-test" style="margin-top: 15px; background: white; color: #27ae60; padding: 12px 25px;">
+                    <i class="fas fa-redo"></i> Testi Yeniden Başlat
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="content-section" id="summary-section">
+            <button class="back-btn" id="back-from-summary">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-book"></i> Sindirim Sistemi Detaylı Özet
+            </h2>
+            
+            <div class="summary-content">
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-info-circle"></i> SİNDİRİM SİSTEMİNİN TEMEL KAVRAMLARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Sindirim:</strong> Büyük moleküllü besinlerin (karbohidrat, protein, yağ) hücre zarından geçebilecek yapı taşlarına kadar parçalanmasıdır.</li>
+                        <li><strong>Beslenme:</strong> Besinlerin vücuda alınmasıdır.</li>
+                        <li><strong>Mekanik Sindirim:</strong> Besinlerin fiziksel olarak küçük parçalara ayrılması (çiğneme, mide hareketleri, safra etkisi).</li>
+                        <li><strong>Kimyasal Sindirim:</strong> Besinlerin enzimler yardımıyla yapı taşlarına ayrılması.</li>
+                        <li><strong>Hücre içi sindirim:</strong> Besinlerin hücre içinde lizozom enzimleriyle parçalanması.</li>
+                        <li><strong>Hücre dışı sindirim:</strong> Besinlerin hücre dışında salgılanan enzimlerle parçalanması.</li>
+                    </ul>
+                    <div class="important-note">
+                        <strong>📌 Önemli Not:</strong> Su, mineraller ve vitaminler hücre zarından geçebilecek büyüklükte olduğu için sindirime uğramadan kana geçer.
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-teeth"></i> AĞIZ VE SİNDİRİM</div>
+                    <ul class="summary-list">
+                        <li><strong>Dişler:</strong> 32 adet (8 kesici, 4 köpek, 8 küçük azı, 12 büyük azı).</li>
+                        <li><strong>Diş yapısı:</strong> Mine (sert dış tabaka), dentin (kemiksi yapı), pulpa (sinir ve kan damarları).</li>
+                        <li><strong>Tükürük bezleri:</strong> 3 çift (kulak altı, çene altı, dil altı).</li>
+                        <li><strong>Tükürük bileşenleri:</strong> Su (%99), amilaz (piyalin), lizozim, mukus, iyonlar.</li>
+                        <li><strong>Amilaz enzimi:</strong> Nişasta ve glikojeni maltoz ve dekstrine parçalar (pH 6-7).</li>
+                        <li><strong>Dil:</strong> Tat alma, besinleri karıştırma, yutma, konuşma.</li>
+                        <li><span class="highlight">Karbohidrat sindirimi ağızda başlar!</span></li>
+                    </ul>
+                    <div class="diagram-note">
+                        <strong>🔍 Yapısal Hatırlatma:</strong> Tükürükteki lizozim enzimi antibakteriyel etki gösterir. Amilaz enzimi sadece pişmiş nişastayı sindirir.
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-utensils"></i> MİDE VE SİNDİRİM</div>
+                    <ul class="summary-list">
+                        <li><strong>Yapısı:</strong> Üç kas tabakası (enine, boyuna, çapraz), mukoza, bezler.</li>
+                        <li><strong>Bölümleri:</strong> Kardia (mide ağzı), pilor (mide kapısı).</li>
+                        <li><strong>Mide öz suyu bileşenleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">HCl (hidroklorik asit):</span> Ortamı asitleştirir, mikroorganizmaları öldürür, pepsin aktivasyonu</li>
+                                <li><span class="highlight">Pepsinojen:</span> Pasif enzim (HCl ile aktif pepsin olur)</li>
+                                <li><span class="highlight">Mukus:</span> Mide duvarını korur</li>
+                                <li><span class="highlight">Lipaz:</span> Az miktarda, yağ sindirimi</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hormonal kontrol:</strong> Gastrin hormonu mide öz suyu salgılanmasını artırır.</li>
+                        <li><strong>Mide korunma mekanizmaları:</strong> Mukus tabakası, hızlı epitel yenilenmesi, enzimlerin inaktif formda salgılanması.</li>
+                        <li><span class="highlight">Protein sindirimi midede başlar!</span></li>
+                        <li><strong>Kimus:</strong> Midedeki besinlerin mide öz suyu ile karışması sonucu oluşan bulamaç.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-intestine"></i> İNCE BAĞIRSAK VE SİNDİRİM</div>
+                    <ul class="summary-list">
+                        <li><strong>Uzunluk:</strong> 7-8 metre.</li>
+                        <li><strong>Bölümleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Duodenum (onikiparmak bağırsağı):</span> İlk 25 cm, safra ve pankreas salgılarının açıldığı yer</li>
+                                <li><span class="highlight">Jejunum (boş bağırsak):</span> Orta kısım</li>
+                                <li><span class="highlight">İleum (kıvrımlı bağırsak):</span> Son kısım, kalın bağırsağa bağlanır</li>
+                            </ul>
+                        </li>
+                        <li><strong>Yapısal özellikler:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Villus:</span> Parmaksı çıkıntılar, emilim yüzeyini artırır</li>
+                                <li><span class="highlight">Mikrovillus:</span> Villusların üzerindeki sitoplazmik uzantılar</li>
+                                <li><span class="highlight">Kripta:</span> Bezlerin bulunduğu çöküntüler</li>
+                            </ul>
+                        </li>
+                        <li><strong>İnce bağırsak bezleri enzimleri:</strong> Maltaz, sükraz, laktaz, enterokinaz, aminopeptidaz, dipeptidaz, nükleaz.</li>
+                        <li><strong>Sindirim:</strong> Karbohidrat, protein ve yağ sindirimi burada tamamlanır.</li>
+                        <li><strong>Emilim:</strong> Sindirilen besinlerin %90'ı buradan emilir.</li>
+                    </ul>
+                    <div class="important-note">
+                        <strong>💡 Emilim Mekanizması:</strong> Villus ve mikrovilluslar emilim yüzeyini 600 kat artırarak verimli emilim sağlar.
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-colon"></i> KALIN BAĞIRSAK VE GÖREVLERİ</div>
+                    <ul class="summary-list">
+                        <li><strong>Uzunluk:</strong> 1-1.5 metre.</li>
+                        <li><strong>Bölümleri:</strong> Kör bağırsak (çekum) → Apandis → Kolon (çıkan, enine, inen) → Rektum → Anüs.</li>
+                        <li><strong>Görevleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Su ve elektrolitlerin (Na⁺, Cl⁻, K⁺) emilimi</li>
+                                <li>B ve K vitaminlerinin sentezi (bağırsak bakterileri)</li>
+                                <li>Vitamin emilimi</li>
+                                <li>Atık depolama ve atılım</li>
+                            </ul>
+                        </li>
+                        <li><strong>Kalın bağırsakta:</strong> Villus yok, enzim üretimi yok, kimyasal sindirim yok.</li>
+                        <li><strong>Apandis:</strong> Kör bağırsağın ucunda, lenfoid doku içerir, bağışıklıkta rol oynar.</li>
+                        <li><strong>Dışkı bileşimi:</strong> Sindirilmemiş besinler, selüloz, bakteri, su, safra pigmentleri.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-liver"></i> KARACİĞER VE SAFRA SİSTEMİ</div>
+                    <ul class="summary-list">
+                        <li><strong>Vücudun en büyük organı</strong> (deriden sonra).</li>
+                        <li><strong>Safra üretimi:</strong> Günde 500-1000 mL safra üretir.</li>
+                        <li><strong>Safra bileşenleri:</strong> Su, safra tuzları, kolesterol, bilirubin, bikarbonat.</li>
+                        <li><strong>Safranın görevleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Yağların mekanik sindirimi (emülsiyon)</li>
+                                <li>Asidik kimusu nötralize etme</li>
+                                <li>Yağda eriyen vitaminlerin emilimini kolaylaştırma</li>
+                                <li>Antiseptik etki</li>
+                                <li>Atık ürünlerin (bilirubin) atılımı</li>
+                            </ul>
+                        </li>
+                        <li><strong>Karaciğerin diğer görevleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Karbohidrat, protein, yağ metabolizması düzenleme</li>
+                                <li>Glikojen depolama</li>
+                                <li>Protein sentezi (albumin, fibrinojen)</li>
+                                <li>Vitamin depolama (A, D, E, K)</li>
+                                <li>Zehrili maddeleri detoksifiye etme (amonyak→üre)</li>
+                                <li>Eritrosit yıkımı</li>
+                                <li>Isı üretimi</li>
+                            </ul>
+                        </li>
+                        <li><strong>Safra kesesi:</strong> Safrayı depolama, yoğunlaştırma, salgılama.</li>
+                        <li><strong>Safra taşı:</strong> Kolesterol çökmesi sonucu oluşur, safra yolunu tıkar, sarılığa neden olur.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-pancreas"></i> PANKREAS VE SİNDİRİM</div>
+                    <ul class="summary-list">
+                        <li><strong>Karma bez:</strong> Hem sindirim enzimi (ekzokrin) hem hormon (endokrin) salgılar.</li>
+                        <li><strong>Pankreas öz suyu bileşenleri:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Bikarbonat iyonları:</span> Asidik kimusu nötralize eder (pH 7-8)</li>
+                                <li><span class="highlight">Tripsinojen:</span> Protein sindirimi (enterokinaz ile tripsin olur)</li>
+                                <li><span class="highlight">Kimotripsinojen:</span> Protein sindirimi (tripsin ile kimotripsin olur)</li>
+                                <li><span class="highlight">Amilaz:</span> Karbohidrat sindirimi</li>
+                                <li><span class="highlight">Lipaz:</span> Yağ sindirimi</li>
+                                <li><span class="highlight">Nükleaz:</span> Nükleik asit sindirimi</li>
+                                <li><span class="highlight">Karboksipeptidaz:</span> Protein sindirimi</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">İnsülin:</span> Kan şekerini düşürür (beta hücreleri)</li>
+                                <li><span class="highlight">Glukagon:</span> Kan şekerini yükseltir (alfa hücreleri)</li>
+                                <li><span class="highlight">Somatostatin:</span> Sindirim enzimlerini ve hormonları inhibe eder</li>
+                            </ul>
+                        </li>
+                        <li><strong>Salgı kontrolü:</strong> Sekretin ve kolesistokinin hormonları ile kontrol edilir.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-exchange-alt"></i> BESİNLERİN SİNDİRİM MEKANİZMALARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Karbohidratların sindirimi:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Ağız:</span> Tükürük amilazı → nişasta/glikojen → maltoz+dekstrin</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Pankreas amilazı → maltoz+dekstrin</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Maltaz → maltoz → glikoz+glikoz</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Sükraz → sakkaroz → glikoz+fruktoz</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Laktaz → laktoz → glikoz+galaktoz</li>
+                                <li><span class="highlight">Selüloz:</span> Sindirilmez, dışkı ile atılır</li>
+                            </ul>
+                        </li>
+                        <li><strong>Proteinlerin sindirimi:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Mide:</span> Pepsin → protein → polipeptitler</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Tripsin/kimotripsin → polipeptitler → küçük peptitler</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Aminopeptidaz/karboksipeptidaz → peptitler → di/tripeptitler</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Dipeptidaz/tripeptidaz → di/tripeptitler → amino asitler</li>
+                            </ul>
+                        </li>
+                        <li><strong>Yağların sindirimi:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">İnce bağırsak:</span> Safra tuzları → yağ → yağ damlacıkları (mekanik)</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Lipaz → yağ damlacıkları → yağ asidi+gliserol</li>
+                                <li>Yağ sindirimi sadece ince bağırsakta gerçekleşir</li>
+                            </ul>
+                        </li>
+                        <li><strong>Nükleik asitlerin sindirimi:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">İnce bağırsak:</span> Nükleazlar → DNA/RNA → nükleotitler</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Nükleotidaz → nükleotitler → nükleozit+fosfat</li>
+                                <li><span class="highlight">İnce bağırsak:</span> Nükleozidaz → nükleozitler → şeker+azotlu baz</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="diagram-note">
+                        <strong>🏃‍♂️ Sindirim Ürünleri:</strong> Karbohidratlar → monosakkaritler | Proteinler → amino asitler | Yağlar → yağ asidi+gliserol
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-absorb"></i> EMİLİM MEKANİZMALARI VE YOLLARI</div>
+                    <ul class="summary-list">
+                        <li><strong>İnce bağırsaktan emilim:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Monosakkaritler (glikoz, galaktoz):</span> Aktif taşıma</li>
+                                <li><span class="highlight">Fruktoz:</span> Kolaylaştırılmış difüzyon</li>
+                                <li><span class="highlight">Amino asitler:</span> Aktif taşıma</li>
+                                <li><span class="highlight">Yağ asitleri ve gliserol:</span> Basit difüzyon</li>
+                                <li><span class="highlight">Kısa zincirli yağ asitleri:</span> Difüzyon ile kana</li>
+                                <li><span class="highlight">Uzun zincirli yağ asitleri:</span> Lenf sistemine (şilomikron olarak)</li>
+                                <li><span class="highlight">Su ve iyonlar:</span> Osmoz ve aktif taşıma</li>
+                            </ul>
+                        </li>
+                        <li><strong>Emilim yolları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Kan yolu:</span> Glikoz, amino asitler, mineraller, B ve C vitaminleri → kapı toplardamarı → karaciğer → karaciğer üstü toplardamar → alt ana toplardamar → kalp</li>
+                                <li><span class="highlight">Lenf yolu:</span> Yağ asitleri, gliserol, A, D, E, K vitaminleri → lenf kılcalları → peke sarıncı → göğüs kanalı → sol köprücük altı toplardamarı → kalp</li>
+                            </ul>
+                        </li>
+                        <li><strong>Şilomikron:</strong> Yağ asitleri, gliserol ve kolesterolün proteinle kaplanmış formu, lenf yoluyla taşınır.</li>
+                        <li><strong>Kalın bağırsaktan emilim:</strong> Su, Na⁺, Cl⁻, K⁺, safra tuzları, B ve K vitaminleri.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-user-md"></i> SİNDİRİM SİSTEMİ HASTALIKLARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Gastrit:</strong> Mide iltihabı (bakteri, alkol, stres, ilaçlar). Belirtiler: Mide ağrısı, bulantı, kusma.</li>
+                        <li><strong>Ülser:</strong> Mide veya onikiparmak bağırsağında yara (Helicobacter pylori, stres, ilaçlar).</li>
+                        <li><strong>Reflü:</strong> Mide asidinin yemek borusuna kaçması. Belirtiler: Göğüste yanma, ekşime.</li>
+                        <li><strong>İshal:</strong> Sulu dışkı, bağırsak hareketlerinin hızlanması (bakteri, virüs, laktoz intoleransı).</li>
+                        <li><strong>Kabızlık:</strong> Dışkılama güçlüğü (lif eksikliği, az su, hareketsizlik).</li>
+                        <li><strong>Laktoz intoleransı:</strong> Laktaz enzimi eksikliği, süt şekerini sindirememe.</li>
+                        <li><strong>Hemoroit:</strong> Anüs toplardamar genişlemesi (ıkınma, gebelik, kabızlık).</li>
+                        <li><strong>Çölyak hastalığı:</strong> Glütene karşı otoimmün reaksiyon, ince bağırsak villus hasarı.</li>
+                        <li><strong>Safra taşı:</strong> Kolesterol çökmesi, safra yolunu tıkar, sarılık ve ağrı.</li>
+                        <li><strong>Apandisit:</strong> Apandisin iltihabı, acil cerrahi gerektirir.</li>
+                        <li><strong>Kolon kanseri:</strong> Kalın bağırsakta tümör oluşumu.</li>
+                        <li><strong>Pankreatit:</strong> Pankreas iltihabı, sindirim enzimlerinin pankreasta aktive olması.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-heartbeat"></i> SİNDİRİM SİSTEMİ SAĞLIĞINI KORUMA</div>
+                    <ul class="summary-list">
+                        <li><strong>Beslenme alışkanlıkları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Yavaş yemek, iyi çiğnemek</li>
+                                <li>Dengeli ve düzenli beslenmek</li>
+                                <li>Lifli gıdalar tüketmek (sebze, meyve, tam tahıl)</li>
+                                <li>Bol su içmek (günde 2-2.5 litre)</li>
+                                <li>Probiyotik (yoğurt, kefir) ve prebiyotik (muz, soğan, sarımsak) almak</li>
+                                <li>Asitli, baharatlı, yağlı yiyecekleri sınırlamak</li>
+                                <li>Geç saatlerde yemek yememek</li>
+                            </ul>
+                        </li>
+                        <li><strong>Yaşam tarzı:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Düzenli egzersiz yapmak (bağırsak hareketlerini düzenler)</li>
+                                <li>Stresten uzak durmak</li>
+                                <li>Yeterli uyku uyumak</li>
+                                <li>Sigaradan ve alkolden kaçınmak</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hijyen:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Elleri yemekten önce ve sonra yıkamak</li>
+                                <li>Temiz su ve gıda tüketmek</li>
+                                <li>Dişleri düzenli fırçalamak</li>
+                            </ul>
+                        </li>
+                        <li><strong>Tıbbi kontrol:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Düzenli sağlık kontrolleri</li>
+                                <li>Antibiyotikleri bilinçli kullanmak (bağırsak florasını korumak için)</li>
+                                <li>Sindirim şikayetlerinde erken doktora başvurmak</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="important-note">
+                        <strong>🎯 Hedef:</strong> Sağlıklı bir sindirim sistemi için dengeli beslenme + düzenli egzersiz + stres yönetimi + yeterli su tüketimi
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard Navigation
+        document.getElementById('flashcard-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('flashcard-section').classList.add('active');
+            updateProgress('flashcard');
+        });
+
+        document.getElementById('mindmap-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('mindmap-section').classList.add('active');
+            updateProgress('mindmap');
+        });
+
+        document.getElementById('test-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('test-section').classList.add('active');
+            loadTestQuestions();
+            updateProgress('test');
+        });
+
+        document.getElementById('summary-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('summary-section').classList.add('active');
+            updateProgress('summary');
+        });
+
+        // Back buttons
+        document.getElementById('back-from-flashcards').addEventListener('click', () => {
+            document.getElementById('flashcard-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        document.getElementById('back-from-mindmap').addEventListener('click', () => {
+            document.getElementById('mindmap-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        document.getElementById('back-from-test').addEventListener('click', () => {
+            document.getElementById('test-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+            document.getElementById('test-result').style.display = 'none';
+        });
+
+        document.getElementById('back-from-summary').addEventListener('click', () => {
+            document.getElementById('summary-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        // Progress Tracking
+        const completedSections = new Set();
+        
+        function updateProgress(section) {
+            if (!completedSections.has(section)) {
+                completedSections.add(section);
+                const count = completedSections.size;
+                const percent = Math.round((count / 4) * 100);
+                
+                document.getElementById('completed-count').textContent = count;
+                document.getElementById('progress-percent').textContent = percent + '%';
+                document.getElementById('progress-fill').style.width = percent + '%';
+            }
+        }
+
+        // FLASHCARD SYSTEM - 70 Sindirim Sistemi Sorusu
+        const csvData = `Sindirim nedir?,"Büyük moleküllü besinlerin (karbohidrat, protein, yağ) hücre zarından geçebilecek yapı taşlarına kadar parçalanmasıdır."
+Mekanik sindirim nedir?,"Besinlerin fiziksel olarak küçük parçalara ayrılmasıdır (çiğneme, mide hareketleri, safra etkisi)."
+Kimyasal sindirim nedir?,"Besinlerin enzimler yardımıyla yapı taşlarına ayrılmasıdır."
+Hücre içi sindirim nedir?,"Besinlerin hücre içinde lizozom enzimleriyle parçalanmasıdır."
+Hücre dışı sindirim nedir?,"Besinlerin hücre dışında salgılanan enzimlerle parçalanmasıdır."
+Yetişkin bir insanda kaç diş bulunur?,32 diş (8 kesici, 4 köpek, 8 küçük azı, 12 büyük azı).
+Dişin en dışındaki sert tabakaya ne ad verilir?,Mine tabakası.
+Dişin kan damarları ve sinirlerin bulunduğu yumuşak kısmına ne denir?,Pulpa (diş özü).
+Tükürük bezleri kaç tanedir ve isimleri nelerdir?,"3 çifttir: Kulak altı, çene altı, dil altı tükürük bezleri."
+Tükürükte bulunan ve nişastayı parçalayan enzimin adı nedir?,Amilaz (piyalin).
+Tükürükteki lizozim enziminin görevi nedir?,Antibakteriyel etki gösterir, ağızdaki bakterileri öldürür.
+Yutakta sindirim olur mu?,Hayır, yutakta mekanik veya kimyasal sindirim olmaz.
+Yemek borusunun kasılıp gevşeyerek besinleri mideye ilettiği hareketin adı nedir?,Peristaltik hareket.
+Midenin yemek borusuna bağlandığı bölüme ne denir?,Kardia (mide ağzı).
+Midenin ince bağırsağa bağlandığı bölüme ne denir?,Pilor (mide kapısı).
+Mide öz suyunda bulunan asidin adı nedir?,HCl (hidroklorik asit).
+HCl'nin mide sindirimindeki görevleri nelerdir?,"1. Ortamı asitleştirir, 2. Mikroorganizmaları öldürür, 3. Pepsin enzimini aktifleştirir."
+Midede protein sindirimini başlatan enzim nedir?,Pepsin.
+Pepsin enzimi nasıl aktif hale gelir?,Pepsinojen (pasif) + HCl → Pepsin (aktif).
+Mide duvarını asitten koruyan madde nedir?,Mukus.
+Midede besinlerin mide öz suyu ile karışması sonucu oluşan bulamaç nedir?,Kimus.
+Midenin kendi kendini sindirmesini önleyen mekanizmalar nelerdir?,"1. Mukus tabakası, 2. Hızlı epitel yenilenmesi, 3. Enzimlerin inaktif formda salgılanması."
+İnce bağırsağın uzunluğu ne kadardır?,7-8 metre.
+İnce bağırsağın mideye bağlanan ilk bölümüne ne ad verilir?,Duodenum (onikiparmak bağırsağı).
+İnce bağırsağın orta bölümüne ne ad verilir?,Jejunum (boş bağırsak).
+İnce bağırsağın kalın bağırsağa bağlanan son bölümüne ne ad verilir?,İleum (kıvrımlı bağırsak).
+İnce bağırsakta emilim yüzeyini artıran parmaksı çıkıntılara ne denir?,Villus.
+Villusların üzerindeki mikroskobik çıkıntılara ne denir?,Mikrovillus.
+İnce bağırsakta karbohidrat sindirimini tamamlayan enzimler nelerdir?,"Maltaz, sükraz, laktaz, dekstrinaz."
+İnce bağırsakta protein sindirimini tamamlayan enzimler nelerdir?,"Tripsin, kimotripsin, aminopeptidaz, karboksipeptidaz, dipeptidaz, tripeptidaz."
+İnce bağırsakta yağ sindirimini sağlayan enzim nedir?,Lipaz.
+Kalın bağırsağın uzunluğu ne kadardır?,1-1.5 metre.
+Kör bağırsağın ucundaki parmak şeklindeki çıkıntıya ne denir?,Apandis.
+Apandisin iltihaplanmasına ne denir?,Apandisit.
+Kalın bağırsağın en son bölümüne ne ad verilir?,Rektum (düz bağırsak).
+Kalın bağırsakta villus bulunur mu?,Hayır, kalın bağırsakta villus bulunmaz.
+Kalın bağırsakta enzim üretilir mi?,Hayır, kalın bağırsakta enzim üretilmez.
+Kalın bağırsağın temel görevleri nelerdir?,"1. Su ve elektrolit emilimi, 2. B ve K vitaminlerinin sentezi, 3. Atık depolama ve atılım."
+Karaciğer vücudun hangi organından sonra en büyük organıdır?,Deriden sonra en büyük organdır.
+Karaciğerde üretilen sindirim sıvısının adı nedir?,Safra.
+Safranın görevleri nelerdir?,"1. Yağların mekanik sindirimi (emülsiyon), 2. Asidik kimusu nötralize etme, 3. Yağda eriyen vitaminlerin emilimini kolaylaştırma."
+Safrada sindirim enzimi bulunur mu?,Hayır, safrada sindirim enzimi bulunmaz.
+Safra nerede depolanır?,Safra kesesinde depolanır.
+Karaciğerin diğer görevleri nelerdir?,"1. Karbohidrat, protein, yağ metabolizması, 2. Glikojen depolama, 3. Protein sentezi, 4. Vitamin depolama, 5. Detoksifikasyon, 6. Eritrosit yıkımı."
+Pankreas ne tür bir bezdir?,Karma bezdir (hem ekzokrin hem endokrin).
+Pankreasın ekzokrin salgısı nedir?,Pankreas öz suyu (sindirim enzimleri ve bikarbonat).
+Pankreas öz suyundaki bikarbonatın görevi nedir?,Asidik kimusu nötralize etmek.
+Pankreasın endokrin salgıları nelerdir?,"İnsülin, glukagon, somatostatin."
+Pankreastan salgılanan ve kan şekerini düşüren hormon nedir?,İnsülin.
+Pankreastan salgılanan ve kan şekerini yükselten hormon nedir?,Glukagon.
+Mide öz suyu salgısını artıran hormon nedir?,Gastrin.
+Pankreası uyararak bikarbonat salgısını artıran hormon nedir?,Sekretin.
+Safra kesesini uyararak safra salgısını artıran hormon nedir?,Kolesistokinin.
+Karbohidrat sindirimi nerede başlar?,Ağızda başlar.
+Protein sindirimi nerede başlar?,Midede başlar.
+Yağ sindirimi nerede başlar?,İnce bağırsakta başlar.
+Karbohidrat sindirimi nerede tamamlanır?,İnce bağırsakta tamamlanır.
+Protein sindirimi nerede tamamlanır?,İnce bağırsakta tamamlanır.
+Yağ sindirimi nerede tamamlanır?,İnce bağırsakta tamamlanır.
+Nişasta hangi enzimle maltoz ve dekstrine parçalanır?,Amilaz enzimi.
+Maltoz hangi enzimle glikoza parçalanır?,Maltaz enzimi.
+Sakkaroz (çay şekeri) hangi enzimle glikoz ve fruktoza parçalanır?,Sükraz (sakkaraz) enzimi.
+Laktoz (süt şekeri) hangi enzimle glikoz ve galaktoza parçalanır?,Laktaz enzimi.
+Midede proteinler hangi enzimle polipeptitlere parçalanır?,Pepsin enzimi.
+İnce bağırsakta proteinlerin sindiriminde rol alan pankreas enzimleri nelerdir?,"Tripsin ve kimotripsin."
+Yağlar hangi enzimle yağ asidi ve gliserole parçalanır?,Lipaz enzimi.
+Nükleik asitler hangi enzimle nükleotitlere parçalanır?,Nükleaz enzimleri.
+Glikoz ve galaktoz ince bağırsaktan nasıl emilir?,Aktif taşıma ile.
+Fruktoz ince bağırsaktan nasıl emilir?,Kolaylaştırılmış difüzyon ile.
+Yağ asitleri ve gliserol ince bağırsaktan nasıl emilir?,Basit difüzyon ile.
+Yağ sindirimi ürünleri hangi yolla taşınır?,Lenf yoluyla taşınır.
+Glikoz ve amino asitler hangi yolla taşınır?,Kan yoluyla taşınır.
+Şilomikron nedir?,"Yağ asitleri, gliserol ve kolesterolün proteinle kaplanmış formudur, lenf yoluyla taşınır."
+Sindirim sistemi hastalığı gastrit nedir?,Mide iltihabıdır.
+Sindirim sistemi hastalığı ülser nedir?,Mide veya onikiparmak bağırsağında yara oluşumu.
+Reflü nedir?,Mide asidinin yemek borusuna kaçması.
+Laktoz intoleransı nedir?,Laktaz enzimi eksikliği nedeniyle süt şekerini sindirememe.
+Safra taşı nedir?,Kolesterol çökmesi sonucu safra yolunda taş oluşumu.
+Sindirim sistemi sağlığını korumak için neler yapılmalıdır?,"1. Yavaş yemek, iyi çiğnemek, 2. Lifli gıdalar tüketmek, 3. Bol su içmek, 4. Düzenli egzersiz, 5. Stresten uzak durmak."`;
+
+        // Process CSV data
+        const lines = csvData.split('\n');
+        const flashcards = lines.map(line => {
+            let parts = [];
+            let inQuotes = false;
+            let currentPart = '';
+            
+            for (let i = 0; i < line.length; i++) {
+                if (line[i] === '"') {
+                    inQuotes = !inQuotes;
+                } else if (line[i] === ',' && !inQuotes) {
+                    parts.push(currentPart);
+                    currentPart = '';
+                } else {
+                    currentPart += line[i];
+                }
+            }
+            parts.push(currentPart);
+            
+            const question = parts[0].replace(/^"|"$/g, '').trim();
+            const answer = parts[1].replace(/^"|"$/g, '').trim();
+            
+            return { question, answer };
+        });
+
+        // Flashcard variables
+        let currentCardIndex = 0;
+        const totalCards = flashcards.length;
+
+        // DOM elements for flashcards
+        const flashcardElement = document.getElementById('flashcard');
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const currentCardElement = document.getElementById('current-card');
+        const totalCardsElement = document.getElementById('total-cards');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const flipButton = document.getElementById('flip-btn');
+        const shuffleButton = document.getElementById('shuffle-btn');
+
+        // Initialize flashcards
+        totalCardsElement.textContent = totalCards;
+        loadCard();
+
+        function loadCard() {
+            const currentCard = flashcards[currentCardIndex];
+            questionElement.textContent = currentCard.question;
+            answerElement.textContent = currentCard.answer;
+            currentCardElement.textContent = currentCardIndex + 1;
+            flashcardElement.classList.remove('flipped');
+        }
+
+        // Flashcard event listeners
+        prevButton.addEventListener('click', () => {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                loadCard();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentCardIndex < totalCards - 1) {
+                currentCardIndex++;
+                loadCard();
+            }
+        });
+
+        flipButton.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        flashcardElement.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        shuffleButton.addEventListener('click', () => {
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            currentCardIndex = 0;
+            loadCard();
+        });
+
+        // TEST SYSTEM - 50 Questions
+        const testQuestions = [
+            {
+                question: "Sindirimin tanımı aşağıdakilerden hangisidir?",
+                options: [
+                    "Besinlerin vücuda alınması",
+                    "Büyük moleküllü besinlerin hücre zarından geçebilecek yapı taşlarına parçalanması",
+                    "Besinlerin fiziksel olarak küçük parçalara ayrılması",
+                    "Besinlerin hücre içinde parçalanması",
+                    "Sadece enzimlerle besinlerin parçalanması"
+                ],
+                correct: 1,
+                explanation: "Sindirim, büyük moleküllü besinlerin (karbohidrat, protein, yağ) hücre zarından geçebilecek yapı taşlarına kadar parçalanmasıdır."
+            },
+            {
+                question: "Yetişkin bir insanda toplam kaç diş bulunur?",
+                options: ["20", "28", "32", "36", "40"],
+                correct: 2,
+                explanation: "Yetişkin bir insanda 32 diş bulunur: 8 kesici, 4 köpek, 8 küçük azı, 12 büyük azı."
+            },
+            {
+                question: "Tükürükte bulunan ve nişastayı parçalayan enzim aşağıdakilerden hangisidir?",
+                options: ["Pepsin", "Amilaz", "Lipaz", "Tripsin", "Laktaz"],
+                correct: 1,
+                explanation: "Tükürükteki amilaz (piyalin) enzimi nişasta ve glikojeni maltoz ve dekstrine parçalar."
+            },
+            {
+                question: "Yemek borusunun kasılıp gevşeyerek besinleri mideye ilettiği harekete ne ad verilir?",
+                options: ["Osmatik hareket", "Peristaltik hareket", "Difüzyon hareketi", "Sinerjik hareket", "Refleks hareket"],
+                correct: 1,
+                explanation: "Peristaltik hareket, yemek borusunun kasılıp gevşeyerek besinleri mideye ilettiği dalga benzeri harekettir."
+            },
+            {
+                question: "Midenin yemek borusuna bağlandığı bölüme ne ad verilir?",
+                options: ["Pilor", "Kardia", "Fundus", "Antrum", "Duodenum"],
+                correct: 1,
+                explanation: "Kardia, midenin yemek borusuna bağlandığı bölümdür. Pilor ise ince bağırsağa bağlanan bölümdür."
+            },
+            {
+                question: "Mide öz suyunda bulunan ve protein sindirimini başlatan enzim aşağıdakilerden hangisidir?",
+                options: ["Amilaz", "Lipaz", "Pepsin", "Tripsin", "Kimotripsin"],
+                correct: 2,
+                explanation: "Pepsin, midede protein sindirimini başlatan enzimdir. Pepsinojen olarak salgılanır, HCl ile aktifleşir."
+            },
+            {
+                question: "Mide duvarını asit ve enzimlerden koruyan madde aşağıdakilerden hangisidir?",
+                options: ["HCl", "Pepsin", "Mukus", "Bikarbonat", "Safra"],
+                correct: 2,
+                explanation: "Mukus, mide duvarını HCl ve pepsin enziminin sindirici etkisinden korur."
+            },
+            {
+                question: "İnce bağırsağın uzunluğu yaklaşık ne kadardır?",
+                options: ["1-2 metre", "3-4 metre", "5-6 metre", "7-8 metre", "9-10 metre"],
+                correct: 3,
+                explanation: "İnce bağırsak yaklaşık 7-8 metre uzunluğundadır. Kalın bağırsak ise 1-1.5 metre uzunluğundadır."
+            },
+            {
+                question: "İnce bağırsakta emilim yüzeyini artıran parmaksı çıkıntılara ne ad verilir?",
+                options: ["Mikrovillus", "Villus", "Kripta", "Pilor", "Kardia"],
+                correct: 1,
+                explanation: "Villuslar, ince bağırsakta emilim yüzeyini artıran parmaksı çıkıntılardır. Mikrovilluslar ise villusların üzerindeki mikroskobik çıkıntılardır."
+            },
+            {
+                question: "Kalın bağırsakta aşağıdakilerden hangisi bulunmaz?",
+                options: ["Villus", "Su emilimi", "Bakteri florası", "Atık depolama", "Elektrolit emilimi"],
+                correct: 0,
+                explanation: "Kalın bağırsakta villus bulunmaz. Villuslar sadece ince bağırsakta bulunur."
+            },
+            {
+                question: "Karaciğerde üretilen sindirim sıvısı aşağıdakilerden hangisidir?",
+                options: ["Pankreas öz suyu", "Safra", "Mide öz suyu", "Tükürük", "Bağırsak öz suyu"],
+                correct: 1,
+                explanation: "Safra, karaciğerde üretilir ve safra kesesinde depolanır. Yağların mekanik sindirimini sağlar."
+            },
+            {
+                question: "Safranın temel görevi aşağıdakilerden hangisidir?",
+                options: [
+                    "Proteinleri amino asitlere parçalamak",
+                    "Nişastayı maltoza parçalamak",
+                    "Yağları mekanik olarak küçük damlacıklara ayırmak",
+                    "Asidik ortamı asitleştirmek",
+                    "Vitaminleri parçalamak"
+                ],
+                correct: 2,
+                explanation: "Safranın temel görevi yağları mekanik olarak küçük damlacıklara ayırarak lipaz enziminin etkisini kolaylaştırmaktır."
+            },
+            {
+                question: "Pankreasın ekzokrin salgısı aşağıdakilerden hangisidir?",
+                options: ["İnsülin", "Glukagon", "Pankreas öz suyu", "Somatostatin", "Gastrin"],
+                correct: 2,
+                explanation: "Pankreasın ekzokrin salgısı pankreas öz suyudur (sindirim enzimleri ve bikarbonat). İnsülin ve glukagon endokrin salgılardır."
+            },
+            {
+                question: "Pankreastan salgılanan ve kan şekerini düşüren hormon aşağıdakilerden hangisidir?",
+                options: ["Glukagon", "İnsülin", "Somatostatin", "Gastrin", "Sekretin"],
+                correct: 1,
+                explanation: "İnsülin, pankreastan salgılanan ve kan şekerini düşüren hormondur. Glukagon ise kan şekerini yükseltir."
+            },
+            {
+                question: "Mide öz suyu salgısını artıran hormon aşağıdakilerden hangisidir?",
+                options: ["Sekretin", "Kolesistokinin", "Gastrin", "İnsülin", "Glukagon"],
+                correct: 2,
+                explanation: "Gastrin hormonu mide öz suyu salgısını artırır. Sekretin ve kolesistokinin ise pankreas ve safra salgılarını düzenler."
+            },
+            {
+                question: "Karbohidrat sindirimi nerede başlar?",
+                options: ["Midede", "Ağızda", "İnce bağırsakta", "Yemek borusunda", "Kalın bağırsakta"],
+                correct: 1,
+                explanation: "Karbohidrat sindirimi ağızda tükürük amilazı ile başlar. Protein sindirimi midede, yağ sindirimi ince bağırsakta başlar."
+            },
+            {
+                question: "Protein sindirimi nerede başlar?",
+                options: ["Ağızda", "Midede", "İnce bağırsakta", "Kalın bağırsakta", "Yemek borusunda"],
+                correct: 1,
+                explanation: "Protein sindirimi midede pepsin enzimi ile başlar. Karbohidrat sindirimi ağızda, yağ sindirimi ince bağırsakta başlar."
+            },
+            {
+                question: "Yağ sindirimi nerede başlar ve biter?",
+                options: [
+                    "Ağızda başlar, midede biter",
+                    "Midede başlar, ince bağırsakta biter",
+                    "İnce bağırsakta başlar ve biter",
+                    "Ağızda başlar, ince bağırsakta biter",
+                    "Midede başlar, kalın bağırsakta biter"
+                ],
+                correct: 2,
+                explanation: "Yağ sindirimi sadece ince bağırsakta başlar ve biter. Safra ile mekanik sindirim, lipaz ile kimyasal sindirim gerçekleşir."
+            },
+            {
+                question: "Nişasta hangi enzimle maltoz ve dekstrine parçalanır?",
+                options: ["Maltaz", "Amilaz", "Sükraz", "Laktaz", "Lipaz"],
+                correct: 1,
+                explanation: "Amilaz enzimi nişasta ve glikojeni maltoz ve dekstrine parçalar. Maltaz ise maltozu glikoza parçalar."
+            },
+            {
+                question: "Maltoz hangi enzimle glikoza parçalanır?",
+                options: ["Amilaz", "Maltaz", "Sükraz", "Laktaz", "Pepsin"],
+                correct: 1,
+                explanation: "Maltaz enzimi maltozu iki glikoz molekülüne parçalar. Amilaz nişastayı maltoza parçalar."
+            },
+            {
+                question: "Laktoz (süt şekeri) hangi enzimle parçalanır?",
+                options: ["Maltaz", "Amilaz", "Sükraz", "Laktaz", "Pepsin"],
+                correct: 3,
+                explanation: "Laktaz enzimi laktozu glikoz ve galaktoza parçalar. Laktaz eksikliğinde laktoz intoleransı oluşur."
+            },
+            {
+                question: "Midede proteinler hangi enzimle polipeptitlere parçalanır?",
+                options: ["Tripsin", "Kimotripsin", "Pepsin", "Amilaz", "Lipaz"],
+                correct: 2,
+                explanation: "Pepsin enzimi midede proteinleri polipeptitlere parçalar. Tripsin ve kimotripsin ince bağırsakta görev yapar."
+            },
+            {
+                question: "İnce bağırsakta protein sindiriminde rol alan pankreas enzimleri hangileridir?",
+                options: [
+                    "Pepsin ve tripsin",
+                    "Tripsin ve kimotripsin",
+                    "Amilaz ve lipaz",
+                    "Maltaz ve laktaz",
+                    "Enterokinaz ve aminopeptidaz"
+                ],
+                correct: 1,
+                explanation: "Tripsin ve kimotripsin, pankreastan salgılanan ve ince bağırsakta protein sindiriminde rol alan enzimlerdir."
+            },
+            {
+                question: "Yağlar hangi enzimle yağ asidi ve gliserole parçalanır?",
+                options: ["Amilaz", "Pepsin", "Lipaz", "Tripsin", "Maltaz"],
+                correct: 2,
+                explanation: "Lipaz enzimi yağları yağ asidi ve gliserole parçalar. Safra ile önce mekanik sindirim gerçekleşir."
+            },
+            {
+                question: "Glikoz ve galaktoz ince bağırsaktan nasıl emilir?",
+                options: [
+                    "Kolaylaştırılmış difüzyon ile",
+                    "Aktif taşıma ile",
+                    "Basit difüzyon ile",
+                    "Osmoz ile",
+                    "Endositoz ile"
+                ],
+                correct: 1,
+                explanation: "Glikoz ve galaktoz aktif taşıma ile ince bağırsaktan emilir. Fruktoz ise kolaylaştırılmış difüzyon ile emilir."
+            },
+            {
+                question: "Yağ asitleri ve gliserol ince bağırsaktan nasıl emilir?",
+                options: [
+                    "Aktif taşıma ile",
+                    "Kolaylaştırılmış difüzyon ile",
+                    "Basit difüzyon ile",
+                    "Osmoz ile",
+                    "Endositoz ile"
+                ],
+                correct: 2,
+                explanation: "Yağ asitleri ve gliserol basit difüzyon ile ince bağırsaktan emilir. Uzun zincirli yağ asitleri lenf yoluyla taşınır."
+            },
+            {
+                question: "Yağ sindirimi ürünleri hangi yolla taşınır?",
+                options: [
+                    "Kan yoluyla",
+                    "Lenf yoluyla",
+                    "Sinir yoluyla",
+                    "Safra yoluyla",
+                    "İdrar yoluyla"
+                ],
+                correct: 1,
+                explanation: "Yağ sindirimi ürünleri (yağ asitleri, gliserol, A,D,E,K vitaminleri) lenf yoluyla taşınır. Şilomikron olarak paketlenir."
+            },
+            {
+                question: "Glikoz ve amino asitler hangi yolla taşınır?",
+                options: [
+                    "Lenf yoluyla",
+                    "Kan yoluyla",
+                    "Sinir yoluyla",
+                    "Safra yoluyla",
+                    "İdrar yoluyla"
+                ],
+                correct: 1,
+                explanation: "Glikoz, amino asitler, mineral ve B,C vitaminleri kan yoluyla taşınır. Kapı toplardamarı ile karaciğere gelir."
+            },
+            {
+                question: "Şilomikron nedir?",
+                options: [
+                    "Glikozun depo formu",
+                    "Amino asitlerin taşınma formu",
+                    "Yağ sindirimi ürünlerinin proteinle kaplanmış formu",
+                    "Vitaminlerin aktif formu",
+                    "Mineral iyonlarının taşınma formu"
+                ],
+                correct: 2,
+                explanation: "Şilomikron, yağ asitleri, gliserol ve kolesterolün proteinle kaplanmış formudur. Lenf yoluyla taşınır."
+            },
+            {
+                question: "Gastrit nedir?",
+                options: [
+                    "Mide ülseri",
+                    "Mide iltihabı",
+                    "Yemek borusu yanması",
+                    "Bağırsak iltihabı",
+                    "Safra kesesi iltihabı"
+                ],
+                correct: 1,
+                explanation: "Gastrit, mide iltihabıdır. Helicobacter pylori bakterisi, alkol, stres, ilaçlar neden olabilir."
+            },
+            {
+                question: "Reflü nedir?",
+                options: [
+                    "Mide iltihabı",
+                    "Mide asidinin yemek borusuna kaçması",
+                    "Bağırsak tıkanıklığı",
+                    "Safra kesesi taşı",
+                    "Pankreas iltihabı"
+                ],
+                correct: 1,
+                explanation: "Reflü, mide asidinin yemek borusuna geri kaçmasıdır. Göğüste yanma, ekşime hissi verir."
+            },
+            {
+                question: "Laktoz intoleransının nedeni nedir?",
+                options: [
+                    "Amilaz enzimi eksikliği",
+                    "Pepsin enzimi eksikliği",
+                    "Laktaz enzimi eksikliği",
+                    "Lipaz enzimi eksikliği",
+                    "Tripsin enzimi eksikliği"
+                ],
+                correct: 2,
+                explanation: "Laktoz intoleransı, laktaz enzimi eksikliği nedeniyle süt şekeri olan laktozu sindirememektir."
+            },
+            {
+                question: "Kalın bağırsakta hangi vitaminler sentezlenir?",
+                options: [
+                    "A ve D vitaminleri",
+                    "B ve K vitaminleri",
+                    "C ve E vitaminleri",
+                    "Sadece B vitaminleri",
+                    "Sadece K vitaminleri"
+                ],
+                correct: 1,
+                explanation: "Kalın bağırsakta bulunan bakteriler B ve K vitaminlerini sentezler. Bu vitaminler kalın bağırsaktan emilir."
+            },
+            {
+                question: "Karaciğerin sindirim dışındaki görevleri arasında aşağıdakilerden hangisi yoktur?",
+                options: [
+                    "Glikojen depolama",
+                    "Protein sentezi",
+                    "Vitamin depolama",
+                    "Kan şekerini düzenleme",
+                    "Oksijen taşıma"
+                ],
+                correct: 4,
+                explanation: "Karaciğerin görevleri: glikojen depolama, protein sentezi, vitamin depolama, detoksifikasyon, ısı üretimi. Oksijen taşıma alyuvarların görevidir."
+            },
+            {
+                question: "Pankreas öz suyundaki bikarbonatın görevi nedir?",
+                options: [
+                    "Proteinleri parçalamak",
+                    "Yağları parçalamak",
+                    "Asidik kimusu nötralize etmek",
+                    "Nişastayı parçalamak",
+                    "Enzimleri aktifleştirmek"
+                ],
+                correct: 2,
+                explanation: "Pankreas öz suyundaki bikarbonat iyonları, mideden gelen asidik kimusu nötralize ederek pH'yı 7-8'e yükseltir."
+            },
+            {
+                question: "Sekretin hormonunun görevi nedir?",
+                options: [
+                    "Mide öz suyu salgısını artırmak",
+                    "Pankreastan bikarbonat salgısını artırmak",
+                    "Safra kesesinden safra salgısını artırmak",
+                    "İnce bağırsak hareketlerini hızlandırmak",
+                    "Mide hareketlerini yavaşlatmak"
+                ],
+                correct: 1,
+                explanation: "Sekretin hormonu, pankreastan bikarbonat salgısını artırarak asidik kimusu nötralize eder."
+            },
+            {
+                question: "Kolesistokinin hormonunun görevi nedir?",
+                options: [
+                    "Mide öz suyu salgısını artırmak",
+                    "Pankreas enzim salgısını artırmak",
+                    "Safra kesesinden safra salgısını artırmak",
+                    "Hem pankreas enzim salgısını hem safra salgısını artırmak",
+                    "İnce bağırsak hareketlerini yavaşlatmak"
+                ],
+                correct: 3,
+                explanation: "Kolesistokinin hormonu, hem pankreas enzim salgısını hem de safra kesesinden safra salgısını artırır."
+            },
+            {
+                question: "İnce bağırsakta karbohidrat sindirimini tamamlayan enzimler hangileridir?",
+                options: [
+                    "Amilaz ve maltaz",
+                    "Maltaz, sükraz, laktaz",
+                    "Pepsin ve tripsin",
+                    "Lipaz ve safra",
+                    "Tripsin ve kimotripsin"
+                ],
+                correct: 1,
+                explanation: "İnce bağırsakta karbohidrat sindirimini maltaz, sükraz, laktaz ve dekstrinaz enzimleri tamamlar."
+            },
+            {
+                question: "İnce bağırsakta protein sindirimini tamamlayan enzimler hangileridir?",
+                options: [
+                    "Sadece pepsin",
+                    "Sadece tripsin",
+                    "Tripsin, kimotripsin, peptidazlar",
+                    "Sadece lipaz",
+                    "Amilaz ve maltaz"
+                ],
+                correct: 2,
+                explanation: "İnce bağırsakta protein sindirimini tripsin, kimotripsin, aminopeptidaz, karboksipeptidaz, dipeptidaz, tripeptidaz enzimleri tamamlar."
+            },
+            {
+                question: "Aşağıdaki besinlerden hangisi sindirime uğramadan kana geçer?",
+                options: ["Nişasta", "Protein", "Yağ", "Vitamin", "Maltoz"],
+                correct: 3,
+                explanation: "Vitaminler, mineraller ve su hücre zarından geçebilecek büyüklükte olduğu için sindirime uğramadan kana geçer."
+            },
+            {
+                question: "İnce bağırsakta emilim yüzeyini artıran yapılar hangileridir?",
+                options: [
+                    "Sadece villuslar",
+                    "Sadece mikrovilluslar",
+                    "Villuslar ve mikrovilluslar",
+                    "Kriptalar",
+                    "Pilor sfinkteri"
+                ],
+                correct: 2,
+                explanation: "Villuslar ve mikrovilluslar ince bağırsakta emilim yüzeyini 600 kata kadar artırarak verimli emilim sağlar."
+            },
+            {
+                question: "Apandis nerede bulunur?",
+                options: [
+                    "Midenin altında",
+                    "İnce bağırsağın başlangıcında",
+                    "Kör bağırsağın ucunda",
+                    "Kalın bağırsağın sonunda",
+                    "Karaciğerin altında"
+                ],
+                correct: 2,
+                explanation: "Apandis, kör bağırsağın (çekum) ucunda bulunan parmak şeklindeki çıkıntıdır. İltihaplanmasına apandisit denir."
+            },
+            {
+                question: "Safra taşının oluşum nedeni nedir?",
+                options: [
+                    "Protein birikmesi",
+                    "Karbonhidrat birikmesi",
+                    "Kolesterol çökmesi",
+                    "Vitamin eksikliği",
+                    "Mineral fazlalığı"
+                ],
+                correct: 2,
+                explanation: "Safra taşı, safradaki kolesterolün çökmesi sonucu oluşur. Safra yolunu tıkayarak sarılığa neden olabilir."
+            },
+            {
+                question: "Helicobacter pylori bakterisi hangi hastalığa neden olur?",
+                options: ["Gastrit", "Reflü", "İshal", "Kabızlık", "Laktoz intoleransı"],
+                correct: 0,
+                explanation: "Helicobacter pylori bakterisi gastrit ve mide ülserine neden olur. Midede asidik ortamda yaşayabilir."
+            },
+            {
+                question: "Çölyak hastalığı nedir?",
+                options: [
+                    "Süt şekerine karşı intolerans",
+                    "Glütene karşı otoimmün reaksiyon",
+                    "Mide asidinin yemek borusuna kaçması",
+                    "Bağırsak iltihabı",
+                    "Safra taşı oluşumu"
+                ],
+                correct: 1,
+                explanation: "Çölyak hastalığı, glütene karşı gelişen otoimmün bir reaksiyondur. İnce bağırsak villuslarında hasara neden olur."
+            },
+            {
+                question: "Sindirim sistemi sağlığını korumak için aşağıdakilerden hangisi yapılmamalıdır?",
+                options: [
+                    "Bol su içmek",
+                    "Lifli gıdalar tüketmek",
+                    "Yavaş yemek, iyi çiğnemek",
+                    "Aşırı yağlı ve baharatlı yiyecekler tüketmek",
+                    "Düzenli egzersiz yapmak"
+                ],
+                correct: 3,
+                explanation: "Aşırı yağlı, baharatlı, asitli yiyecekler sindirim sistemi sağlığını olumsuz etkiler. Dengeli beslenme önemlidir."
+            },
+            {
+                question: "Probiyotik nedir?",
+                options: [
+                    "Sindirim enzimleri",
+                    "Bağırsakta yaşayan yararlı bakteriler",
+                    "Vitamin takviyeleri",
+                    "Mineral destekleri",
+                    "Lifli gıdalar"
+                ],
+                correct: 1,
+                explanation: "Probiyotikler, bağırsakta yaşayan ve sağlığa yararlı etkileri olan canlı bakterilerdir. Yoğurt, kefir gibi gıdalarda bulunur."
+            },
+            {
+                question: "Peristaltik hareketler hangi sindirim organlarında görülür?",
+                options: [
+                    "Sadece yemek borusunda",
+                    "Sadece midede",
+                    "Sadece bağırsaklarda",
+                    "Yemek borusu, mide ve bağırsaklarda",
+                    "Sadece kalın bağırsakta"
+                ],
+                correct: 3,
+                explanation: "Peristaltik hareketler yemek borusu, mide ve bağırsaklarda görülür. Besinlerin sindirim kanalında ilerlemesini sağlar."
+            },
+            {
+                question: "Villusların içinde hangi yapılar bulunur?",
+                options: [
+                    "Sadece kan kılcalları",
+                    "Sadece lenf kılcalları",
+                    "Kan kılcalları ve lenf kılcalları",
+                    "Sadece sinirler",
+                    "Sadece kas lifleri"
+                ],
+                correct: 2,
+                explanation: "Villusların içinde hem kan kılcalları (glikoz, amino asit emilimi) hem de lenf kılcalları (yağ emilimi) bulunur."
+            },
+            {
+                question: "Karaciğer hangi vitaminleri depolar?",
+                options: [
+                    "A, D, E, K vitaminleri",
+                    "B ve C vitaminleri",
+                    "Sadece D vitamini",
+                    "Sadece A vitamini",
+                    "Tüm vitaminler"
+                ],
+                correct: 0,
+                explanation: "Karaciğer yağda eriyen A, D, E, K vitaminlerini depolar. B ve C vitaminleri suda erir, depolanmaz, fazlası atılır."
+            },
+            {
+                question: "Pankreasın endokrin kısmından salgılanmayan hormon hangisidir?",
+                options: ["İnsülin", "Glukagon", "Somatostatin", "Gastrin", "Pankreatik polipeptit"],
+                correct: 3,
+                explanation: "Gastrin hormonu mideden salgılanır, pankreastan salgılanmaz. Pankreasın endokrin hormonları: insülin, glukagon, somatostatin, pankreatik polipeptit."
+            }
+        ];
+
+        let userAnswers = new Array(testQuestions.length).fill(-1);
+
+        function loadTestQuestions() {
+            const container = document.getElementById('test-container');
+            container.innerHTML = '';
+            userAnswers.fill(-1);
+
+            testQuestions.forEach((q, index) => {
+                const letters = ['A', 'B', 'C', 'D', 'E'];
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card';
+                questionDiv.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <span class="question-number">${index + 1}</span>
+                        <span class="question-text">${q.question}</span>
+                    </div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-q="${index}" data-opt="${optIndex}">
+                                <div class="option-letter">${letters[optIndex]}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const qIndex = parseInt(this.getAttribute('data-q'));
+                    const optIndex = parseInt(this.getAttribute('data-opt'));
+                    
+                    // Remove previous selection for this question
+                    const options = document.querySelectorAll(`.option[data-q="${qIndex}"]`);
+                    options.forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.classList.remove('correct', 'wrong');
+                    });
+                    
+                    // Mark selected option
+                    this.classList.add('selected');
+                    userAnswers[qIndex] = optIndex;
+                });
+            });
+        }
+
+        document.getElementById('submit-test').addEventListener('click', () => {
+            let score = 0;
+            const total = testQuestions.length;
+
+            // Check answers
+            testQuestions.forEach((q, index) => {
+                const options = document.querySelectorAll(`.option[data-q="${index}"]`);
+                if (userAnswers[index] === q.correct) {
+                    score++;
+                    options[q.correct].classList.add('correct');
+                } else if (userAnswers[index] !== -1) {
+                    options[userAnswers[index]].classList.add('wrong');
+                    options[q.correct].classList.add('correct');
+                } else {
+                    // If not answered, still show correct answer
+                    options[q.correct].classList.add('correct');
+                }
+            });
+
+            // Show results
+            const resultDiv = document.getElementById('test-result');
+            document.getElementById('score').textContent = `${score}`;
+            
+            let message = '';
+            if (score === total) {
+                message = '🎉 MÜKEMMEL! Tüm soruları doğru cevapladınız! Sindirim sistemini tamamen öğrenmişsiniz.';
+            } else if (score >= total * 0.85) {
+                message = '👏 ÇOK İYİ! Sindirim sistemini çok iyi anlamışsınız. Sadece birkaç detay üzerinde çalışın.';
+            } else if (score >= total * 0.70) {
+                message = '👍 İYİ! Konuyu anlamışsınız ama bazı noktaları tekrar etmeniz faydalı olacaktır.';
+            } else if (score >= total * 0.50) {
+                message = '📚 ORTA SEVİYE! Sindirim sisteminin temellerini anlamışsınız ama detaylar üzerinde çalışmalısınız.';
+            } else {
+                message = '📖 GELİŞTİRME GEREKİYOR! Konuyu tekrar çalışmanızı öneririm. Bilgi kartları ve özetlerden başlayın.';
+            }
+            
+            document.getElementById('test-message').textContent = message;
+            
+            // Show detailed result
+            const correctCount = score;
+            const wrongCount = userAnswers.filter((ans, idx) => ans !== -1 && ans !== testQuestions[idx].correct).length;
+            const emptyCount = userAnswers.filter(ans => ans === -1).length;
+            
+            document.getElementById('detailed-result').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                    <div style="background: #28a745; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${correctCount}</div>
+                        <div>Doğru</div>
+                    </div>
+                    <div style="background: #dc3545; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${wrongCount}</div>
+                        <div>Yanlış</div>
+                    </div>
+                    <div style="background: #6c757d; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${emptyCount}</div>
+                        <div>Boş</div>
+                    </div>
+                </div>
+                <div style="font-size: 1.1rem; opacity: 0.9;">
+                    Başarı Oranı: <strong>${Math.round((score/total)*100)}%</strong>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('restart-test').addEventListener('click', () => {
+            loadTestQuestions();
+            document.getElementById('test-result').style.display = 'none';
+        });
+
+        document.getElementById('clear-selections').addEventListener('click', () => {
+            loadTestQuestions();
+        });
+
+        // Keyboard shortcuts for flashcards
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flashcard-section').classList.contains('active')) {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        if (currentCardIndex > 0) {
+                            currentCardIndex--;
+                            loadCard();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        if (currentCardIndex < totalCards - 1) {
+                            currentCardIndex++;
+                            loadCard();
+                        }
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        flashcardElement.classList.toggle('flipped');
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
